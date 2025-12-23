@@ -1,11 +1,6 @@
 package com.jetpack.compose.screens
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,21 +22,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.jetpack.compose.ImageUtils
 import timber.log.Timber
-import java.io.File
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -52,6 +42,9 @@ fun MainScreen(
             onImageSelected = {
                 imageUri = it
                 Timber.e("Selected image: $it")
+            },
+            onError = {
+                Timber.e("Failed to select image")
             }
         ) {
             Button(
@@ -65,6 +58,9 @@ fun MainScreen(
             onCaptured = {
                 imageUri = it
                 Timber.e("Captured image: $it")
+            },
+            onError = {
+                Timber.e("Failed to capture image")
             }
         ) {
             Button(onClick = it) {
@@ -79,20 +75,17 @@ fun MainScreen(
 @Composable
 private fun GalleryImagPicker(
     onImageSelected: (Uri) -> Unit,
+    onError: () -> Unit,
     pickerButton: @Composable (onClick: () -> Unit) -> Unit,
 ) {
     val pickMedia =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            // Callback is invoked after the user selects a media item or closes the
-            // photo picker.
             if (uri != null) {
                 onImageSelected(uri)
             }
             if (uri != null) {
                 Timber.e("Media selected: $uri")
-            } else {
-                Timber.e("No media selected")
-            }
+            } else onError.invoke()
         }
 
     pickerButton {
@@ -102,7 +95,8 @@ private fun GalleryImagPicker(
 
 @Composable
 fun CaptureImage(
-    onCaptured: (Uri) -> Unit = {},
+    onCaptured: (Uri) -> Unit,
+    onError: () -> Unit,
     captureButton: @Composable (onClick: () -> Unit) -> Unit,
 ) {
     val context = LocalContext.current
@@ -113,26 +107,14 @@ fun CaptureImage(
     ) { success ->
         if (success) {
             photoUri?.let(onCaptured)
-        } else {
-            photoUri = null
-        }
+        } else onError.invoke()
     }
 
     captureButton {
-        val uri = createImageUri(context)
+        val uri = ImageUtils.createImageUri(context)
         photoUri = uri
         takePictureLauncher.launch(uri)
     }
-}
-
-fun createImageUri(context: Context): Uri {
-    val dir = File(context.cacheDir, "images").apply { mkdirs() }
-    val file = File(dir, "camera_${System.currentTimeMillis()}.jpg")
-    return FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.fileprovider",
-        file
-    )
 }
 
 @Composable
@@ -141,7 +123,7 @@ fun UriPreview(uri: Uri?) {
     var img by remember(uri) { mutableStateOf<ImageBitmap?>(null) }
 
     LaunchedEffect(uri) {
-        img = uri?.let { uriToImageBitmap(context, it) }
+        img = uri?.let { ImageUtils.convertUriToImageBitmap(context, it) }
     }
 
     img?.let {
@@ -151,25 +133,6 @@ fun UriPreview(uri: Uri?) {
             contentDescription = "Captured image",
         )
     }
-}
-
-suspend fun uriToImageBitmap(
-    context: Context,
-    uri: Uri,
-): ImageBitmap? = withContext(Dispatchers.IO) {
-    runCatching {
-        val bitmap: Bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val source = ImageDecoder.createSource(context.contentResolver, uri)
-            ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
-                decoder.isMutableRequired = false
-            }
-        } else {
-            context.contentResolver.openInputStream(uri)?.use { input ->
-                BitmapFactory.decodeStream(input)
-            } ?: return@withContext null
-        }
-        bitmap.asImageBitmap()
-    }.getOrNull()
 }
 
 @Preview(showBackground = true, showSystemUi = true)
