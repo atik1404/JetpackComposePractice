@@ -70,7 +70,10 @@ dependencies {
         implementation(bundles.compose.navigation)
         implementation(bundles.androidx.navigation.dependencies)
 
+
         implementation(bundles.network)
+
+        implementation(bundles.images)
 
         implementation(libs.kotlinx.serialization.core)
 
