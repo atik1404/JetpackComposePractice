@@ -1,74 +1,84 @@
-import dependencies.*
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import java.text.SimpleDateFormat
-import java.util.Calendar
-
 plugins {
-    id ("com.android.application")
-    kotlin("android")
-    kotlin("kapt")
-    //id ("com.google.gms.google-services")
-    //id ("com.google.firebase.crashlytics")
-    //id("androidx.navigation.safeargs")
-    id ("dagger.hilt.android.plugin")
+    alias(libs.plugins.android.application)
+    //alias(libs.plugins.hilt)
+    //alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
-    compileSdk  = AppConfig.compileSdkVersion
-    defaultConfig {
-        applicationId  = AppConfig.applicationId
-        minSdk  = AppConfig.minSdkVersion
-        targetSdk  = AppConfig.targetSdkVersion
-        versionCode  = AppConfig.versionCode
-        versionName  = AppConfig.versionName
-        testInstrumentationRunner = AppConfig.testRunner
+    namespace = "com.jetpack.compose"
+    compileSdk {
+        version = release(36)
     }
+    defaultConfig {
+        applicationId = "com.jetpack.compose"
+        minSdk = 23
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
-        viewBinding = true
+        compose = true
     }
-    namespace = "com.jetpack.compose"
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 dependencies {
-    addFeatureModules()
-    addDataModule()
-    addDomainModule()
-    addCommonModule()
-    //addAssetsModule()
-   // addNavigation()
+    with(libs) {
+        implementation(androidx.core.ktx)
+        implementation(androidx.appcompat)
 
-    addAndroidxCoreDependencies()
-    addAndroidxLifeCycleDependencies()
-    addHiltDependencies()
-    addRxjava3Dependencies()
-    addRoomDependencies()
-    addPlayCoreDependencies()
-    addFirebaseDependencies()
-    addLeakcanaryDependencies()
-    addAndroidTestsDependencies()
-}
+        implementation(bundles.lifecycle)
 
-kapt {
-    correctErrorTypes = true
+        //implementation(hilt.android)
+        //ksp(hilt.compiler)
+
+        implementation(platform(libs.androidx.compose.bom))
+        implementation(bundles.compose.core)
+        implementation(bundles.core.ui)
+        implementation(bundles.compose.tooling)
+        implementation(bundles.compose.navigation)
+        implementation(bundles.androidx.navigation.dependencies)
+
+        implementation(bundles.network)
+
+        implementation(libs.kotlinx.serialization.core)
+
+        debugImplementation(leakcanary)
+        implementation(timber)
+
+        testImplementation(test.junit)
+        androidTestImplementation(test.extjunit)
+        androidTestImplementation(test.espresso)
+    }
 }

@@ -1,35 +1,16 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        jcenter()
-        google()
-        maven ("https://jitpack.io")
-        maven ("https://oss.jfrog.org/libs-snapshot")
-    }
-    dependencies {
-        classpath ("com.android.tools.build:gradle:7.3.1")
-        classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
-       // classpath ("com.google.gms:google-services:${AppConfig.googleServicesVersion}")
-        //classpath ("com.google.firebase:firebase-crashlytics-gradle:${AppConfig.firebaseCrashAnalyticGradleVersion}")
-        //classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${AppConfig.safe_args_version}")
-        classpath ("com.google.dagger:hilt-android-gradle-plugin:${AppConfig.hilt_android_version}")
-    }
-}
+plugins {
+    alias(libs.plugins.android.application) apply false
 
-allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        jcenter()
-        google()
-        maven ("https://jitpack.io")
-        maven ("https://oss.jfrog.org/libs-snapshot")
-    }
-}
+    alias(libs.plugins.compose.compiler) apply false
 
-tasks.create<Delete>("clean") {
-    delete  = setOf(
-        rootProject.buildDir
-    )
+//    alias(libs.plugins.google.services) apply false
+//    alias(libs.plugins.firebase.crashlytics) apply false
+//    alias(libs.plugins.firebase.perf.plugin) apply false
+
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+    //alias(libs.plugins.ksp) apply false
+
+    //alias(libs.plugins.hilt) apply false
 }

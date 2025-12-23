@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="11" />
+    <bytecodeTargetLevel target="21">
+      <module name="StudentPayment.common" target="21" />
+      <module name="StudentPayment.data" target="21" />
+      <module name="StudentPayment.di" target="21" />
+      <module name="StudentPayment.domain" target="21" />
+      <module name="StudentPayment.feature.repo-details" target="21" />
+      <module name="StudentPayment.feature.repo-list" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="StudentPayment.model.api-entity" options="-proc:none" />
+      <module name="StudentPayment.model.api-entity.main" options="-proc:none" />
+      <module name="StudentPayment.model.api-entity.test" options="-proc:none" />
+      <module name="StudentPayment.model.api-response" options="-proc:none" />
+      <module name="StudentPayment.model.api-response.main" options="-proc:none" />
+      <module name="StudentPayment.model.api-response.test" options="-proc:none" />
+    </option>
   </component>
 </project>
