@@ -25,6 +25,10 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import com.jetpack.compose.ImageUtils
 import timber.log.Timber
 
@@ -33,6 +37,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
 ) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -68,6 +73,30 @@ fun MainScreen(
             }
         }
 
+        val cropLauncher = rememberLauncherForActivityResult(
+            contract = CropImageContract()
+        ) { result ->
+            if (result.isSuccessful) {
+                imageUri = result.uriContent
+                Timber.e("Cropped image: ${result.uriContent}")
+            } else {
+                Timber.e("Failed to crop image: ${result.error}")
+            }
+        }
+
+        if (imageUri != null) {
+            val options = CropImageContractOptions(
+                cropImageOptions = CropImageOptions(
+                    guidelines = CropImageView.Guidelines.ON,
+                    fixAspectRatio = true,
+                    aspectRatioX = 1,
+                    aspectRatioY = 1,
+                ),
+                uri = imageUri
+            )
+            cropLauncher.launch(options)
+        }
+
         UriPreview(imageUri)
     }
 }
@@ -90,6 +119,41 @@ private fun GalleryImagPicker(
 
     pickerButton {
         pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+}
+
+@Composable
+fun CropImage(
+    onCropped: (Uri) -> Unit,
+    onError: (Throwable) -> Unit = {},
+) {
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val cropLauncher = rememberLauncherForActivityResult(
+        contract = CropImageContract()
+    ) { result ->
+        if (result.isSuccessful) {
+            // cropped image uri
+            result.uriContent?.let(onCropped)
+        } else {
+            result.error?.let(onError)
+        }
+    }
+
+    Button(
+        onClick = {
+            val options = CropImageContractOptions(
+                cropImageOptions = CropImageOptions(
+                    guidelines = CropImageView.Guidelines.ON,
+                    fixAspectRatio = true,
+                    aspectRatioX = 1,
+                    aspectRatioY = 1,
+                ),
+                uri = imageUri
+            )
+            cropLauncher.launch(options)
+        }
+    ) {
+        Text("Pick & Crop")
     }
 }
 
