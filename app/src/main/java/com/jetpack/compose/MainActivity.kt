@@ -5,12 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.jetpack.compose.screens.MainScreen
+import com.jetpack.compose.screens.MainScreenRoute
 import com.jetpack.compose.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,19 +17,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(
-                        Modifier.padding(innerPadding)
-                    )
+                    MainScreenRoute()
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun GreetingPreview() {
-    MyApplicationTheme {
-        MainScreen()
     }
 }
