@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
-    //alias(libs.plugins.hilt)
-    //alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
 }
@@ -60,8 +60,8 @@ dependencies {
 
         implementation(bundles.lifecycle)
 
-        //implementation(hilt.android)
-        //ksp(hilt.compiler)
+        implementation(hilt.android)
+        ksp(hilt.compiler)
 
         implementation(platform(libs.androidx.compose.bom))
         implementation(bundles.compose.core)
