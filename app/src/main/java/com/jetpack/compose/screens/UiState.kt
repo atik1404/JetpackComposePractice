@@ -4,7 +4,8 @@ data class UiState(
     val items: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val isMoreItemLoading: Boolean = false,
-    val pageNo: Int = 0
+    val hasMorePage: Boolean = true,
+    val pageNo: Int = 1
 )
 
 sealed interface UiAction {
