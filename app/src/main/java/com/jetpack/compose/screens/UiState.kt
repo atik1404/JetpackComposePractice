@@ -1,7 +1,7 @@
 package com.jetpack.compose.screens
 
 data class UiState(
-    val items: List<String> = emptyList(),
+    val items: List<ItemModel> = emptyList(),
     val isLoading: Boolean = false,
     val isMoreItemLoading: Boolean = false,
     val hasMorePage: Boolean = true,

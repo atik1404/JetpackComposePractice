@@ -25,11 +25,12 @@ class MainViewModel @Inject constructor() : BaseViewModel() {
 
     private fun fetchItems() {
         execute {
-            _uiState.value = _uiState.value.copy(isLoading = true, pageNo = 1)
-            delay(2000)
+            _uiState.value = _uiState.value.copy(pageNo = 1, items = emptyList())
+            delay(1000)
             val items = getItems()
             val hasMorePage = items.size >= pageSize
-            _uiState.value = _uiState.value.copy(items = items, isLoading = false, hasMorePage = hasMorePage)
+            _uiState.value =
+                _uiState.value.copy(items = items, isLoading = false, hasMorePage = hasMorePage)
         }
     }
 
@@ -55,9 +56,18 @@ class MainViewModel @Inject constructor() : BaseViewModel() {
         }
     }
 
-    fun getItems(): List<String> {
-        val size = Random.nextInt(20)
-        Timber.e("---> Size: $size")
-        return (1..size).map { "This is title for index: " }
+    fun getItems(): List<ItemModel> {
+        //val size = Random.nextInt(20)
+        return (1..20).map {
+            ItemModel(
+                id = it,
+                value = "This is title for index: "
+            )
+        }
     }
 }
+
+data class ItemModel(
+    val id: Int,
+    val value: String,
+)
