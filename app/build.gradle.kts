@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.android
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.hilt)
@@ -70,6 +72,11 @@ dependencies {
         implementation(bundles.compose.tooling)
         implementation(bundles.compose.navigation)
         implementation(bundles.androidx.navigation.dependencies)
+        implementation(androidx.compose.materialicon)
+        implementation(androidx.compose.material3)
+        implementation(androidx.compose.foundation)
+
+        implementation(kotlin.coroutines)
 
         implementation(bundles.network)
 
