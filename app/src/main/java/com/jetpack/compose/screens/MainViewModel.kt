@@ -56,8 +56,8 @@ class MainViewModel @Inject constructor() : BaseViewModel() {
     }
 
     fun getItems(): List<String> {
-        val size = Random.nextInt(20)
+        val size = Random.nextInt(50)
         Timber.e("---> Size: $size")
-        return (1..size).map { "This is title for index: " }
+        return (1..50).map { "This is title for index: " }
     }
 }
